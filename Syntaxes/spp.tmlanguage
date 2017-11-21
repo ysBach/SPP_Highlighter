@@ -1,0 +1,859 @@
+{
+    "file_extensions": [
+        "x", 
+        "cl"
+    ], 
+    "first_line_match": "-[*]-( Mode:)? C -[*]-", 
+    "contexts": {
+        "operators": [
+            {
+                "match": "->", 
+                "scope": "punctuation.accessor.x"
+            }, 
+            {
+                "match": "\\+\\=|-\\=|\\*\\=|/\\=|%\\=|&\\=|\\|\\=|\\^\\=|>>\\=|<<\\=", 
+                "scope": "keyword.operator.assignment.augmented.x"
+            }, 
+            {
+                "match": "<<|>>|&&|\\|\\|", 
+                "scope": "keyword.operator.arithmetic.x"
+            }, 
+            {
+                "match": "<\\=|>\\=|\\=\\=|<|>|\\!\\=", 
+                "scope": "keyword.operator.comparison.x"
+            }, 
+            {
+                "match": "\\+|\\-|/|%|\\||\\^|~|!", 
+                "scope": "keyword.operator.arithmetic.x"
+            }, 
+            {
+                "match": "\\*|&", 
+                "scope": "keyword.operator.x"
+            }, 
+            {
+                "match": "\\=", 
+                "scope": "keyword.operator.assignment.x"
+            }, 
+            {
+                "match": "\\?|:(?!:)", 
+                "scope": "keyword.operator.ternary.x"
+            }, 
+            {
+                "match": "\\.\\.\\.", 
+                "scope": "keyword.operator.variadic.x"
+            }
+        ], 
+        "late-expressions": [
+            {
+                "include": "modifiers-parens"
+            }, 
+            {
+                "include": "modifiers"
+            }, 
+            {
+                "include": "types"
+            }, 
+            {
+                "include": "function-call"
+            }, 
+            {
+                "match": ";", 
+                "scope": "punctuation.terminator.x"
+            }
+        ], 
+        "preprocessor-other": [
+            {
+                "captures": {
+                    "1": "keyword.control.import.x"
+                }, 
+                "match": "^\\s*(#\\s*(?:if|ifdef|ifndef|else|line))\\b", 
+                "push": [
+                    {
+                        "meta_scope": "meta.preprocessor.x"
+                    }, 
+                    {
+                        "include": "preprocessor-line-continuation"
+                    }, 
+                    {
+                        "include": "preprocessor-line-ending"
+                    }, 
+                    {
+                        "include": "preprocessor-comments"
+                    }, 
+                    {
+                        "match": "\\bdefined\\b", 
+                        "scope": "keyword.control.x"
+                    }
+                ]
+            }, 
+            {
+                "captures": {
+                    "1": "meta.preprocessor.x keyword.control.import.x"
+                }, 
+                "match": "^\\s*(#\\s*endif)\\b"
+            }, 
+            {
+                "captures": {
+                    "1": "keyword.control.import.error.x"
+                }, 
+                "match": "^\\s*(#\\s*(?:error|warning))\\b", 
+                "push": [
+                    {
+                        "meta_scope": "meta.preprocessor.diagnostic.x"
+                    }, 
+                    {
+                        "include": "preprocessor-line-continuation"
+                    }, 
+                    {
+                        "include": "preprocessor-line-ending"
+                    }, 
+                    {
+                        "include": "preprocessor-comments"
+                    }, 
+                    {
+                        "include": "strings"
+                    }, 
+                    {
+                        "match": "\\S+", 
+                        "scope": "string.unquoted.x"
+                    }
+                ]
+            }, 
+            {
+                "captures": {
+                    "1": "keyword.control.import.include.x"
+                }, 
+                "match": "^\\s*(\\s*(?:include|begin|end|include_next|import))\\b", 
+                "push": [
+                    {
+                        "meta_scope": "meta.preprocessor.include.x"
+                    }, 
+                    {
+                        "include": "preprocessor-line-continuation"
+                    }, 
+                    {
+                        "include": "preprocessor-line-ending"
+                    }, 
+                    {
+                        "include": "preprocessor-comments"
+                    }, 
+                    {
+                        "match": "\"", 
+                        "scope": "punctuation.definition.string.begin.x", 
+                        "push": [
+                            {
+                                "meta_scope": "string.quoted.double.include.x"
+                            }, 
+                            {
+                                "match": "\"", 
+                                "scope": "punctuation.definition.string.end.x", 
+                                "pop": true
+                            }
+                        ]
+                    }, 
+                    {
+                        "match": "<", 
+                        "scope": "punctuation.definition.string.begin.x", 
+                        "push": [
+                            {
+                                "meta_scope": "string.quoted.other.lt-gt.include.x"
+                            }, 
+                            {
+                                "match": ">", 
+                                "scope": "punctuation.definition.string.end.x", 
+                                "pop": true
+                            }
+                        ]
+                    }
+                ]
+            }, 
+            {
+                "include": "preprocessor-practical-workarounds"
+            }
+        ], 
+        "parens": [
+            {
+                "match": "\\(", 
+                "scope": "punctuation.section.group.begin.x", 
+                "push": [
+                    {
+                        "meta_scope": "meta.group.x"
+                    }, 
+                    {
+                        "match": "\\)", 
+                        "scope": "punctuation.section.group.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "expressions"
+                    }
+                ]
+            }
+        ], 
+        "comments": [
+            {
+                "match": "#", 
+                "scope": "punctuation.definition.comment.x", 
+                "push": "line_comment"
+            }
+        ], 
+        "global-modifier": [
+            {
+                "include": "comments"
+            }, 
+            {
+                "include": "modifiers-parens"
+            }, 
+            {
+                "include": "modifiers"
+            }, 
+            {
+                "set": "global-type", 
+                "match": "(?=\\S)"
+            }
+        ], 
+        "variables": [
+            {
+                "match": "\\bg[A-Z]\\w*\\b", 
+                "scope": "variable.other.readwrite.global.mac-classic.x"
+            }, 
+            {
+                "match": "\\bs[A-Z]\\w*\\b", 
+                "scope": "variable.other.readwrite.static.mac-classic.x"
+            }
+        ], 
+        "preprocessor-expressions": [
+            {
+                "include": "incomplete-inx"
+            }, 
+            {
+                "include": "preprocessor-macro-define"
+            }, 
+            {
+                "include": "pragma-mark"
+            }, 
+            {
+                "include": "preprocessor-other"
+            }
+        ], 
+        "global-type": [
+            {
+                "include": "comments"
+            }, 
+            {
+                "match": "(?=\\b({{control_keywords}})\\b)", 
+                "pop": true
+            }, 
+            {
+                "captures": {
+                    "1": "variable.function.x", 
+                    "2": "meta.group.x punctuation.section.group.begin.x"
+                }, 
+                "match": "({{identifier}})\\s*(\\()(?=[^\\)]+\\))", 
+                "push": [
+                    {
+                        "meta_scope": "meta.function-call.x"
+                    }, 
+                    {
+                        "meta_content_scope": "meta.group.x"
+                    }, 
+                    {
+                        "match": "\\)", 
+                        "scope": "meta.group.x punctuation.section.group.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "expressions"
+                    }
+                ]
+            }, 
+            {
+                "set": [
+                    {
+                        "include": "function-call"
+                    }, 
+                    {
+                        "match": "", 
+                        "pop": true
+                    }
+                ], 
+                "match": "(?={{identifier}}\\s*\\()"
+            }, 
+            {
+                "include": "types"
+            }, 
+            {
+                "match": "{{identifier}}"
+            }, 
+            {
+                "match": "(?=\\W)", 
+                "pop": true
+            }
+        ], 
+        "constants": [
+            {
+                "match": "\\b(__func__|ARB|ERR|EOF|BOF|EOT|BOFL|EOFL|EOS|NO|YES|OK|NULL|READ_ONLY|READ_WRITE|WRITE_ONLY|APPEND|NEW_FILE|TEMP_FILE|NEW_COPY|NEW_IMAGE|NEW_STRUCT|NEW_TAPE|TEXT_FILE|BINARY_FILE|DIRECTORY_FILE|STATIC_FILE|SYMLINK_FILE|SPOOL_FILE|RANDOM|SEQUENTIAL|CLIN|CLOUT|STDIN|STDOUT|STDERR|STDGRAPH|STDIMAGE|STDPLOT|SZ_BOOL|SZ_CHAR|SZ_SHORT|SZ_INT|SZ_LONG|SZ_REAL|SZ_DOUBLE|SZ_COMPLEX|SZ_POINTER|SZ_STRUCT|SZ_USHORT|SZ_FNAME|SZ_PATHNAME|SZ_LINE|SZ_COMMAND|SZ_MII_SHORT|SZ_MII_LONG|SZ_MII_REAL|SZ_MII_DOUBLE|SZ_MII_INT|SZ_INT32|SZ_LONG32|SZ_STRUCT32|TY_BOOL|TY_CHAR|TY_SHORT|TY_INT|TY_LONG|TY_REAL|TY_DOUBLE|TY_COMPLEX|TY_POINTER|TY_STRUCT|TY_USHORT|TY_UBYTE|INDEFS|INDEFL|INDEFI|INDEFR|INDEFD|INDEFX|INDEF)\\b", 
+                "scope": "constant.language.x"
+            }, 
+            {
+                "match": "\\b(SZB_CHAR|SZB_ADDR|SZ_VMPAGE|MAX_DIGITS|NDIGITS_RP|NDIGITS_DP|MAX_EXPONENT|MAX_EXPONENTR|MAX_EXPONENTDMAX_SHORT|MAX_INT|MAX_LONG|MAX_REAL|MAX_DOUBLE|NBITS_BYTE|NBITS_SHORT|NBITS_INT|NBITS_LONG|EPSILONR|EPSILOND|EPSILON|BYTE_SWAP2|BYTE_SWAP4|BYTE_SWAP8|IEEE_SWAP4|IEEE_SWAP8|IEEE_USED|SQRTOF2|BASE_E|EXP_PI|LN_2|LN_10|LN_PI|LOG_E|PI|TWOPI|FOURPI|HALFPI|SQRTOFPI|RADIAN|RADTODEG|DEGTORAD|GAMMA|LN_GAMMA|EXP_GAMMA|DSQRTOF2|DBASE_E|DEXP_PI|DLN_2|DLN_10|DLN_PI|DLOG_E|DPI|DTWOPI|DFOURPI|DHALFPI|DSQRTOFPI|DRADIAN|DRADTODEG|DDEGTORAD|DGAMMA|DLN_GAMMA|DEXP_GAMMA)\\b", 
+                "scope": "support.constant.x"
+            }, 
+            {
+                "match": "\\b(IS_INDEFS|IS_INDEFL|IS_INDEFI|IS_INDEFR|IS_INDEFD|IS_INDEFX|IS_INDEF|P2C|P2S|P2I|P2L|P2R|P2D|P2X|P2P)", 
+                "scope": "support.constant.x"
+            }
+        ], 
+        "expressions": [
+            {
+                "include": "early-expressions"
+            }, 
+            {
+                "include": "late-expressions"
+            }
+        ], 
+        "statements": [
+            {
+                "include": "preprocessor-statements"
+            }, 
+            {
+                "include": "label"
+            }, 
+            {
+                "include": "expressions"
+            }
+        ], 
+        "string_placeholder": [
+            {
+                "match": "(?x)%\n  (\\d+\\$)?                                      # field (argument #)\n  [#0\\- +']*                                    # flags\n  [,;:_]?                                       # separator character (AltiVec)\n  ((-?\\d+)|\\*(-?\\d+\\$)?)?                       # minimum field width\n  (\\.((-?\\d+)|\\*(-?\\d+\\$)?)?)?                  # precision\n  (hh|h|ll|l|j|t|z|q|L|vh|vl|v|hv|hl)?          # length modifier\n  (\\[[^\\]]+\\]|[am]s|[diouxXDOUeEfFgGaACcSspn%]) # conversion type", 
+                "scope": "constant.other.placeholder.x"
+            }
+        ], 
+        "access-illegal": [
+            {
+                "match": "\\.\\.(?!\\.)", 
+                "scope": "invalid.illegal.syntax.x"
+            }
+        ], 
+        "preprocessor-macro-define": [
+            {
+                "captures": {
+                    "1": "meta.preprocessor.macro.x keyword.control.import.define.x"
+                }, 
+                "match": "^\\s*(\\s*define)\\b", 
+                "push": [
+                    {
+                        "meta_content_scope": "meta.preprocessor.macro.x"
+                    }, 
+                    {
+                        "include": "preprocessor-line-continuation"
+                    }, 
+                    {
+                        "include": "preprocessor-line-ending"
+                    }, 
+                    {
+                        "include": "preprocessor-comments"
+                    }, 
+                    {
+                        "set": [
+                            {
+                                "set": "preprocessor-macro-params", 
+                                "match": "\\(", 
+                                "scope": "punctuation.section.group.begin.x"
+                            }
+                        ], 
+                        "match": "({{identifier}})(?=\\()", 
+                        "scope": "entity.name.function.preprocessor.x"
+                    }, 
+                    {
+                        "set": "preprocessor-macro-definition", 
+                        "match": "{{identifier}}", 
+                        "scope": "entity.name.constant.preprocessor.x"
+                    }
+                ]
+            }
+        ], 
+        "preprocessor-line-ending": [
+            {
+                "match": "$\\n", 
+                "pop": true
+            }
+        ], 
+        "brackets": [
+            {
+                "match": "\\[", 
+                "scope": "punctuation.section.brackets.begin.x", 
+                "push": [
+                    {
+                        "meta_scope": "meta.brackets.x"
+                    }, 
+                    {
+                        "match": "\\]", 
+                        "scope": "punctuation.section.brackets.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "expressions"
+                    }
+                ]
+            }
+        ], 
+        "preprocessor-macro-params": [
+            {
+                "meta_scope": "meta.preprocessor.macro.parameters.x meta.group.x"
+            }, 
+            {
+                "match": "{{identifier}}", 
+                "scope": "variable.parameter.x"
+            }, 
+            {
+                "set": "preprocessor-macro-definition", 
+                "match": "\\)", 
+                "scope": "punctuation.section.group.end.x"
+            }, 
+            {
+                "match": ",", 
+                "scope": "punctuation.separator.x", 
+                "push": [
+                    {
+                        "match": "{{identifier}}", 
+                        "scope": "variable.parameter.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "preprocessor-line-continuation"
+                    }, 
+                    {
+                        "include": "preprocessor-comments"
+                    }, 
+                    {
+                        "match": "\\.\\.\\.", 
+                        "scope": "keyword.operator.variadic.x"
+                    }, 
+                    {
+                        "match": "(?=\\))", 
+                        "pop": true
+                    }, 
+                    {
+                        "captures": {
+                            "1": "punctuation.definition.comment.x", 
+                            "2": "punctuation.definition.comment.x"
+                        }, 
+                        "match": "(/\\*).*(\\*/)", 
+                        "scope": "comment.block.x"
+                    }, 
+                    {
+                        "match": "\\S+", 
+                        "scope": "invalid.illegal.unexpected-character.x"
+                    }
+                ]
+            }, 
+            {
+                "include": "preprocessor-line-continuation"
+            }, 
+            {
+                "include": "preprocessor-comments"
+            }, 
+            {
+                "match": "\\.\\.\\.", 
+                "scope": "keyword.operator.variadic.x"
+            }, 
+            {
+                "captures": {
+                    "1": "punctuation.definition.comment.x", 
+                    "2": "punctuation.definition.comment.x"
+                }, 
+                "match": "(/\\*).*(\\*/)", 
+                "scope": "comment.block.x"
+            }, 
+            {
+                "match": "$\\n", 
+                "scope": "invalid.illegal.unexpected-end-of-line.x"
+            }
+        ], 
+        "modifiers": [
+            {
+                "match": "\\b({{modifiers}})\\b", 
+                "scope": "storage.modifier.x"
+            }
+        ], 
+        "early-expressions": [
+            {
+                "include": "preprocessor-expressions"
+            }, 
+            {
+                "include": "comments"
+            }, 
+            {
+                "include": "case-default"
+            }, 
+            {
+                "include": "access"
+            }, 
+            {
+                "include": "typedef"
+            }, 
+            {
+                "include": "keywords-parens"
+            }, 
+            {
+                "include": "keywords"
+            }, 
+            {
+                "include": "numbers"
+            }, 
+            {
+                "include": "operators"
+            }, 
+            {
+                "include": "strings"
+            }, 
+            {
+                "include": "parens"
+            }, 
+            {
+                "include": "brackets"
+            }, 
+            {
+                "include": "block"
+            }, 
+            {
+                "include": "variables"
+            }, 
+            {
+                "include": "constants"
+            }, 
+            {
+                "match": ",", 
+                "scope": "punctuation.separator.x"
+            }, 
+            {
+                "match": "\\)|\\}", 
+                "scope": "invalid.illegal.stray-bracket-end.x"
+            }
+        ], 
+        "string_escaped_char": [
+            {
+                "captures": {
+                    "1": "punctuation.separator.continuation.x"
+                }, 
+                "match": "(\\\\)$\\n"
+            }, 
+            {
+                "match": "\\\\(?:\\\\|[abefnrtv\\'\"?]|[0-3][0-9]{0,2}|[4-7][0-9]?|x[a-fA-F0-9]+|u[a-fA-F0-9]{4}|U[a-fA-F0-9]{8})", 
+                "scope": "constant.character.escape.x"
+            }, 
+            {
+                "match": "\\\\.", 
+                "scope": "invalid.illegal.unknown-escape.x"
+            }
+        ], 
+        "strings": [
+            {
+                "captures": {
+                    "1": "storage.type.string.x", 
+                    "2": "punctuation.definition.string.begin.x"
+                }, 
+                "match": "(L|u8|u|U)?(\")", 
+                "push": [
+                    {
+                        "meta_scope": "string.quoted.double.x"
+                    }, 
+                    {
+                        "match": "\"", 
+                        "scope": "punctuation.definition.string.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "string_escaped_char"
+                    }, 
+                    {
+                        "include": "string_placeholder"
+                    }
+                ]
+            }, 
+            {
+                "captures": {
+                    "1": "storage.type.string.x", 
+                    "2": "punctuation.definition.string.begin.x"
+                }, 
+                "match": "(L|u8|u|U)?(')", 
+                "push": [
+                    {
+                        "meta_scope": "string.quoted.single.x"
+                    }, 
+                    {
+                        "match": "'", 
+                        "scope": "punctuation.definition.string.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "string_escaped_char"
+                    }
+                ]
+            }
+        ], 
+        "preprocessor-statements": [
+            {
+                "include": "preprocessor-rule-enabled-statements"
+            }, 
+            {
+                "include": "preprocessor-rule-disabled-statements"
+            }, 
+            {
+                "include": "preprocessor-rule-other-statements"
+            }
+        ], 
+        "keywords": [
+            {
+                "match": "\\b({{control_keywords}})\\b", 
+                "scope": "keyword.control.x"
+            }
+        ], 
+        "preprocessor-line-continuation": [
+            {
+                "captures": {
+                    "1": "punctuation.separator.continuation.x"
+                }, 
+                "match": "(\\\\)$\\n"
+            }, 
+            {
+                "captures": {
+                    "1": "invalid.illegal.space-after-continuation.x"
+                }, 
+                "match": "\\\\(\\s+?)$"
+            }
+        ], 
+        "line_comment": [
+            {
+                "meta_scope": "comment.line.x"
+            }, 
+            {
+                "match": "$", 
+                "pop": true
+            }
+        ], 
+        "global": [
+            {
+                "include": "early-expressions"
+            }, 
+            {
+                "match": "^\\s*(?=\\w+)", 
+                "push": "global-modifier"
+            }, 
+            {
+                "include": "late-expressions"
+            }
+        ], 
+        "types": [
+            {
+                "match": "\\b({{basic_types}})\\b", 
+                "scope": "storage.type.x"
+            }
+        ], 
+        "main": [
+            {
+                "include": "preprocessor-global"
+            }, 
+            {
+                "include": "global"
+            }
+        ], 
+        "preprocessor-disabled": [
+            {
+                "captures": {
+                    "1": "meta.preprocessor.x"
+                }, 
+                "match": "^\\s*(#\\s*if(n?def)?)\\b", 
+                "push": [
+                    {
+                        "captures": {
+                            "1": "meta.preprocessor.x"
+                        }, 
+                        "match": "^\\s*(#\\s*endif)\\b", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "preprocessor-disabled"
+                    }, 
+                    {
+                        "include": "pragma-mark"
+                    }
+                ]
+            }, 
+            {
+                "include": "pragma-mark"
+            }
+        ], 
+        "preprocessor-macro-definition": [
+            {
+                "meta_content_scope": "meta.preprocessor.macro.x"
+            }, 
+            {
+                "include": "preprocessor-line-continuation"
+            }, 
+            {
+                "include": "preprocessor-line-ending"
+            }, 
+            {
+                "include": "preprocessor-comments"
+            }, 
+            {
+                "match": "\\{", 
+                "scope": "punctuation.section.block.begin.x"
+            }, 
+            {
+                "match": "\\}", 
+                "scope": "punctuation.section.block.end.x"
+            }, 
+            {
+                "include": "expressions"
+            }
+        ], 
+        "function-call": [
+            {
+                "match": "(?={{identifier}}\\s*\\()", 
+                "push": [
+                    {
+                        "meta_content_scope": "meta.function-call.x"
+                    }, 
+                    {
+                        "match": "{{identifier}}", 
+                        "scope": "variable.function.x"
+                    }, 
+                    {
+                        "set": [
+                            {
+                                "meta_content_scope": "meta.function-call.x meta.group.x"
+                            }, 
+                            {
+                                "match": "\\)", 
+                                "scope": "meta.function-call.x meta.group.x punctuation.section.group.end.x", 
+                                "pop": true
+                            }, 
+                            {
+                                "include": "expressions"
+                            }
+                        ], 
+                        "match": "\\(", 
+                        "scope": "meta.group.x punctuation.section.group.begin.x"
+                    }
+                ]
+            }
+        ], 
+        "case-default": [
+            {
+                "match": "\\b(default|case)\\b", 
+                "scope": "keyword.control.x", 
+                "push": [
+                    {
+                        "match": ":", 
+                        "scope": "punctuation.separator.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "expressions"
+                    }
+                ]
+            }
+        ], 
+        "global-maybe-function": [
+            {
+                "include": "comments"
+            }, 
+            {
+                "match": "\\*", 
+                "scope": "keyword.operator.x"
+            }, 
+            {
+                "include": "types"
+            }, 
+            {
+                "include": "modifiers-parens"
+            }, 
+            {
+                "include": "modifiers"
+            }, 
+            {
+                "match": "(?=\\S)", 
+                "pop": true
+            }
+        ], 
+        "preprocessor-global": [
+            {
+                "include": "preprocessor-rule-enabled-global"
+            }, 
+            {
+                "include": "preprocessor-rule-disabled-global"
+            }, 
+            {
+                "include": "preprocessor-rule-other-global"
+            }
+        ], 
+        "typedef": [
+            {
+                "match": "\\btypedef\\b", 
+                "scope": "storage.type.x", 
+                "push": [
+                    {
+                        "captures": {
+                            "1": "entity.name.type.typedef.x"
+                        }, 
+                        "match": "({{identifier}})?\\s*(?=;)", 
+                        "pop": true
+                    }, 
+                    {
+                        "captures": {
+                            "1": "storage.type.x"
+                        }, 
+                        "match": "\\b(struct)\\s+({{identifier}})"
+                    }, 
+                    {
+                        "include": "expressions"
+                    }
+                ]
+            }
+        ], 
+        "block": [
+            {
+                "match": "\\{", 
+                "scope": "punctuation.section.block.begin.x", 
+                "push": [
+                    {
+                        "meta_scope": "meta.block.x"
+                    }, 
+                    {
+                        "match": "(?=^\\s*#\\s*(elif|else|endif)\\b)", 
+                        "pop": true
+                    }, 
+                    {
+                        "match": "\\}", 
+                        "scope": "punctuation.section.block.end.x", 
+                        "pop": true
+                    }, 
+                    {
+                        "include": "statements"
+                    }
+                ]
+            }
+        ], 
+        "numbers": [
+            {
+                "match": "\\b((0(x|X)[0-9a-fA-F]*(\\.[0-9a-fA-F]+p-?\\d+)?)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)([fF]|(l{1,2}|L{1,2})[uU]?|[uU](l{0,2}|L{0,2}))?\\b", 
+                "scope": "constant.numeric.x"
+            }
+        ]
+    }, 
+    "scope": "source.x", 
+    "variables": {
+        "control_keywords": "if|else|switch|case|do|for|repeat|default|until|while|break|next|goto|return", 
+        "non_func_keywords": "if|for|switch|while|decltype|__declspec|__attribute__", 
+        "identifier": "\\b[[:alpha:]_][[:alnum:]_]*\\b", 
+        "storage_classes": "static|extern|call|register", 
+        "type_qualifier": "const|volatile", 
+        "basic_types": "bool|char|short|int|long|real|double|complex|pointer|procedure", 
+        "compiler_directive": "inline|restrict|__restrict__|__restrict", 
+        "modifiers": "{{storage_classes}}|{{type_qualifier}}|{{compiler_directive}}"
+    }, 
+    "name": "SPP"
+}
